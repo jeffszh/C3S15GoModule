@@ -14,6 +14,10 @@ type chess struct {
 	chessType ChessType
 }
 
+func (c *chess) Visible() bool {
+	return c.chessType != ChessTypeEmpty
+}
+
 func (c *chess) Type() ChessType {
 	return c.chessType
 }
@@ -53,6 +57,7 @@ type Chess interface {
 	SetType(chessType ChessType)
 	Text() string
 	Color() color.Color
+	Visible() bool
 }
 
 func NewChess(chessType ChessType) Chess {
