@@ -31,9 +31,9 @@ func (c *chess) Text() string {
 	case ChessTypeEmpty:
 		return " "
 	case ChessTypeCannon:
-		return "炮"
+		return AppConfig.CannonText
 	case ChessTypeSoldier:
-		return "兵"
+		return AppConfig.SoldierText
 	default:
 		return ""
 	}
