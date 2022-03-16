@@ -73,6 +73,7 @@ func NewScene() Scene {
 // SetInitialContent 设置为开局时的场景。
 func (s *sceneStruct) SetInitialContent() {
 	s.lastMove = nil
+	//s.lastMove = NewMoveByXY(2, 2, 2, 4)
 	s.moveCount = 0
 	for i := 0; i < 15; i++ {
 		s.ChessList()[i].SetType(ChessTypeSoldier)
