@@ -14,11 +14,11 @@ func (m *moveStruct) To() int {
 }
 
 func (m *moveStruct) FromXY() (x int, y int) {
-	return indexToXY(m.from)
+	return IndexToXY(m.from)
 }
 
 func (m *moveStruct) ToXY() (x int, y int) {
-	return indexToXY(m.to)
+	return IndexToXY(m.to)
 }
 
 // IsValid 判断Move是否合法
@@ -101,8 +101,8 @@ func NewMoveByXY(fromX int, fromY int, toX int, toY int) Move {
 	return NewMove(XyToIndex(fromX, fromY), XyToIndex(toX, toY))
 }
 
-// 25内的序号转换为5x5纵横坐标。
-func indexToXY(index int) (x int, y int) {
+// IndexToXY 25内的序号转换为5x5纵横坐标。
+func IndexToXY(index int) (x int, y int) {
 	x = index % 5
 	y = index / 5
 	return x, y

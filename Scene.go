@@ -41,7 +41,9 @@ func (s *sceneStruct) Clone() Scene {
 }
 
 func (s *sceneStruct) OnChange() {
-	s.onChange(s)
+	if s.onChange != nil {
+		s.onChange(s)
+	}
 }
 
 func (s *sceneStruct) SetOnChange(f func(scene Scene)) {
@@ -60,6 +62,7 @@ type Scene interface {
 	SetInitialContent()
 	OnChange()
 	SetOnChange(func(scene Scene) ())
+	ApplyMove(move Move)
 }
 
 func NewScene() Scene {
@@ -87,4 +90,17 @@ func (s *sceneStruct) SetInitialContent() {
 	s.ChessList()[23].SetType(ChessTypeEmpty)
 	s.ChessList()[24].SetType(ChessTypeCannon)
 	s.OnChange()
+}
+
+// ApplyMove 走棋
+func (s *sceneStruct) ApplyMove(move Move) {
+	if move.IsValid(s) {
+		from := s.ChessList()[move.From()]
+		to := s.ChessList()[move.To()]
+		from.SetType(ChessTypeEmpty)
+		to.SetType(s.MovingSide())
+		s.lastMove = move
+		s.moveCount++
+		s.OnChange()
+	}
 }
