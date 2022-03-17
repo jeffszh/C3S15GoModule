@@ -74,7 +74,7 @@ func (m *moveStruct) IsValid(scene Scene) bool {
 				// 且中间是空格
 				midX := (fromX + toX) / 2
 				midY := (fromY + toY) / 2
-				if scene.ChessList()[xyToIndex(midX, midY)].Type() == ChessTypeEmpty {
+				if scene.ChessList()[XyToIndex(midX, midY)].Type() == ChessTypeEmpty {
 					return true
 				}
 			}
@@ -98,15 +98,17 @@ func NewMove(from int, to int) Move {
 }
 
 func NewMoveByXY(fromX int, fromY int, toX int, toY int) Move {
-	return NewMove(xyToIndex(fromX, fromY), xyToIndex(toX, toY))
+	return NewMove(XyToIndex(fromX, fromY), XyToIndex(toX, toY))
 }
 
+// 25内的序号转换为5x5纵横坐标。
 func indexToXY(index int) (x int, y int) {
 	x = index % 5
 	y = index / 5
 	return x, y
 }
 
-func xyToIndex(x int, y int) int {
+// XyToIndex 5x5纵横坐标转换为25内的序号。
+func XyToIndex(x int, y int) int {
 	return x + y*5
 }
