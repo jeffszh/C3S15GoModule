@@ -34,16 +34,14 @@ func (m *moveStruct) IsValid(scene Scene) bool {
 		dy = -dy
 	}
 
+	// 首先不能超出棋盘的范围
+	if !AllInRange(fromX, fromY, toX, toY) {
+		return false
+	}
 	fromType := scene.ChessList()[m.From()].Type()
 	toType := scene.ChessList()[m.To()].Type()
 	movingSide := scene.MovingSide()
 
-	// 首先不能超出棋盘的范围
-	for _, val := range []int{fromX, fromY, toX, toY} {
-		if val < 0 || val >= 6 {
-			return false
-		}
-	}
 	// 起点必须是当前回合该走棋一方的棋子
 	if movingSide != fromType {
 		return false
@@ -111,4 +109,14 @@ func IndexToXY(index int) (x int, y int) {
 // XyToIndex 5x5纵横坐标转换为25内的序号。
 func XyToIndex(x int, y int) int {
 	return x + y*5
+}
+
+// AllInRange 判断是否所有数值都在0..4的范围内，若全对，返回true。
+func AllInRange(values ...int) bool {
+	for _, value := range values {
+		if value < 0 || value >= 5 {
+			return false
+		}
+	}
+	return true
 }

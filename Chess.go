@@ -10,6 +10,30 @@ const (
 	ChessTypeSoldier
 )
 
+func (chessType ChessType) Text() string {
+	switch chessType {
+	case ChessTypeEmpty:
+		return " "
+	case ChessTypeCannon:
+		return AppConfig.CannonText
+	case ChessTypeSoldier:
+		return AppConfig.SoldierText
+	default:
+		return ""
+	}
+}
+
+func (chessType ChessType) opponent() ChessType {
+	switch chessType {
+	case ChessTypeCannon:
+		return ChessTypeSoldier
+	case ChessTypeSoldier:
+		return ChessTypeCannon
+	default:
+		return ChessTypeEmpty
+	}
+}
+
 type chess struct {
 	chessType ChessType
 }
@@ -27,16 +51,7 @@ func (c *chess) SetType(chessType ChessType) {
 }
 
 func (c *chess) Text() string {
-	switch c.Type() {
-	case ChessTypeEmpty:
-		return " "
-	case ChessTypeCannon:
-		return AppConfig.CannonText
-	case ChessTypeSoldier:
-		return AppConfig.SoldierText
-	default:
-		return ""
-	}
+	return c.chessType.Text()
 }
 
 func (c *chess) Color() color.Color {

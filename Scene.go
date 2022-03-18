@@ -1,11 +1,36 @@
 package model
 
+import "fmt"
+
 type sceneStruct struct {
 	chessList [25]Chess
 	lastMove  Move
 	moveCount int
+	gameOver  bool
 
 	onChange func(scene Scene) ()
+}
+
+type Scene interface {
+	ChessList() [25]Chess
+	LastMove() Move
+	MoveCount() int
+	MovingSide() ChessType
+	Clone() Scene
+
+	SetInitialContent()
+	OnChange()
+	SetOnChange(func(scene Scene) ())
+	ApplyMove(move Move)
+	SceneStatusInfo() string
+}
+
+func NewScene() Scene {
+	ss := sceneStruct{}
+	for i := range ss.chessList {
+		ss.chessList[i] = NewChess(ChessTypeEmpty)
+	}
+	return &ss
 }
 
 func (s *sceneStruct) ChessList() [25]Chess {
@@ -52,32 +77,12 @@ func (s *sceneStruct) SetOnChange(f func(scene Scene)) {
 	}
 }
 
-type Scene interface {
-	ChessList() [25]Chess
-	LastMove() Move
-	MoveCount() int
-	MovingSide() ChessType
-	Clone() Scene
-
-	SetInitialContent()
-	OnChange()
-	SetOnChange(func(scene Scene) ())
-	ApplyMove(move Move)
-}
-
-func NewScene() Scene {
-	ss := sceneStruct{}
-	for i := range ss.chessList {
-		ss.chessList[i] = NewChess(ChessTypeEmpty)
-	}
-	return &ss
-}
-
 // SetInitialContent 设置为开局时的场景。
 func (s *sceneStruct) SetInitialContent() {
 	s.lastMove = nil
 	//s.lastMove = NewMoveByXY(2, 2, 2, 4)
 	s.moveCount = 0
+	s.gameOver = false
 	for i := 0; i < 15; i++ {
 		s.ChessList()[i].SetType(ChessTypeSoldier)
 	}
@@ -102,5 +107,15 @@ func (s *sceneStruct) ApplyMove(move Move) {
 		s.lastMove = move
 		s.moveCount++
 		s.OnChange()
+	}
+}
+
+func (s *sceneStruct) SceneStatusInfo() string {
+	if s.gameOver {
+		return fmt.Sprintf("第%d步  【%s】获胜！",
+			s.MoveCount()+1, s.MovingSide().opponent().Text())
+	} else {
+		return fmt.Sprintf("第%d步  轮到【%s】走棋",
+			s.MoveCount()+1, s.MovingSide().Text())
 	}
 }
