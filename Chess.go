@@ -23,6 +23,17 @@ func (chessType ChessType) Text() string {
 	}
 }
 
+func (chessType ChessType) PlayerType() PlayerType {
+	switch chessType {
+	case ChessTypeCannon:
+		return AppConfig.CannonPlayType
+	case ChessTypeSoldier:
+		return AppConfig.SoldierPlayType
+	default:
+		return -1
+	}
+}
+
 func (chessType ChessType) opponent() ChessType {
 	switch chessType {
 	case ChessTypeCannon:

@@ -69,6 +69,7 @@ func (s *sceneStruct) Clone() Scene {
 }
 
 func (s *sceneStruct) OnChange() {
+	startAiIfNeed(s)
 	if s.onChange != nil {
 		s.onChange(s)
 	}
@@ -119,8 +120,20 @@ func (s *sceneStruct) SceneStatusInfo() string {
 		return fmt.Sprintf("第%d步  【%s】获胜！",
 			s.MoveCount()+1, s.MovingSide().opponent().Text())
 	} else {
-		return fmt.Sprintf("第%d步  轮到【%s】走棋",
-			s.MoveCount()+1, s.MovingSide().Text())
+		switch s.MovingSide().PlayerType() {
+		case PlayerTypeHuman:
+			return fmt.Sprintf("第%d步  轮到玩家【%s】走棋",
+				s.MoveCount()+1, s.MovingSide().Text())
+		case PlayerTypeAI:
+			return fmt.Sprintf("第%d步  电脑【%s】正在思考……%d",
+				s.MoveCount()+1, s.MovingSide().Text(), aiThinkCount)
+		case PlayerTypeNet:
+			return fmt.Sprintf("第%d步  等待网友【%s】走棋",
+				s.MoveCount()+1, s.MovingSide().Text())
+		default:
+			return fmt.Sprintf("第%d步  轮到【%s】走棋",
+				s.MoveCount()+1, s.MovingSide().Text())
+		}
 	}
 }
 
