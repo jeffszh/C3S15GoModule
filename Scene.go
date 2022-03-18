@@ -22,6 +22,9 @@ type Scene interface {
 	OnChange()
 	SetOnChange(func(scene Scene) ())
 	ApplyMove(move Move)
+	checkGameOver() bool
+	GameOver() bool
+	calcBreath(chessType ChessType) int
 	SceneStatusInfo() string
 }
 
@@ -106,6 +109,7 @@ func (s *sceneStruct) ApplyMove(move Move) {
 		to.SetType(s.MovingSide())
 		s.lastMove = move
 		s.moveCount++
+		s.gameOver = s.checkGameOver()
 		s.OnChange()
 	}
 }
@@ -118,4 +122,49 @@ func (s *sceneStruct) SceneStatusInfo() string {
 		return fmt.Sprintf("第%d步  轮到【%s】走棋",
 			s.MoveCount()+1, s.MovingSide().Text())
 	}
+}
+
+func (s *sceneStruct) calcBreath(chessType ChessType) int {
+	breath := 0
+	for i, chess := range s.ChessList() {
+		if chess.Type() == ChessTypeEmpty {
+			adjacentIndexes := getAllAdjacentIndexes(i)
+			for _, adj := range adjacentIndexes {
+				if s.ChessList()[adj].Type() == chessType {
+					breath++
+					break
+				}
+			}
+		}
+	}
+	return breath
+}
+
+func (s *sceneStruct) GameOver() bool {
+	return s.gameOver
+}
+
+// 每次走棋后，立即检查游戏的胜利条件。
+func (s *sceneStruct) checkGameOver() bool {
+	// 若兵被吃光了，游戏结束。
+	soldierCount := 0
+	for _, chess := range s.ChessList() {
+		if chess.Type() == ChessTypeSoldier {
+			soldierCount++
+		}
+	}
+	if soldierCount == 0 {
+		return true
+	}
+
+	// 若炮没气了，游戏结束。
+	if s.calcBreath(ChessTypeCannon) == 0 {
+		return true
+	}
+
+	// 若兵被逼得无法动弹，同样游戏结束
+	if s.calcBreath(ChessTypeSoldier) == 0 {
+		return true
+	}
+	return false
 }

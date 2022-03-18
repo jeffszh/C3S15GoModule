@@ -120,3 +120,18 @@ func AllInRange(values ...int) bool {
 	}
 	return true
 }
+
+func getAllAdjacentIndexes(index int) []int {
+	var result []int
+	x, y := IndexToXY(index)
+	checkAdjacent := func(x1, y1 int) {
+		if AllInRange(x1, y1) {
+			result = append(result, XyToIndex(x1, y1))
+		}
+	}
+	checkAdjacent(x-1, y)
+	checkAdjacent(x+1, y)
+	checkAdjacent(x, y-1)
+	checkAdjacent(x, y+1)
+	return result
+}
