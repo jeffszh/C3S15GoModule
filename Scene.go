@@ -25,6 +25,7 @@ type Scene interface {
 	checkGameOver() bool
 	GameOver() bool
 	calcBreath(chessType ChessType) int
+	livingSoldierCount() int
 	SceneStatusInfo() string
 }
 
@@ -153,6 +154,16 @@ func (s *sceneStruct) calcBreath(chessType ChessType) int {
 	return breath
 }
 
+func (s *sceneStruct) livingSoldierCount() int {
+	soldierCount := 0
+	for _, chess := range s.ChessList() {
+		if chess.Type() == ChessTypeSoldier {
+			soldierCount++
+		}
+	}
+	return soldierCount
+}
+
 func (s *sceneStruct) GameOver() bool {
 	return s.gameOver
 }
@@ -160,13 +171,7 @@ func (s *sceneStruct) GameOver() bool {
 // 每次走棋后，立即检查游戏的胜利条件。
 func (s *sceneStruct) checkGameOver() bool {
 	// 若兵被吃光了，游戏结束。
-	soldierCount := 0
-	for _, chess := range s.ChessList() {
-		if chess.Type() == ChessTypeSoldier {
-			soldierCount++
-		}
-	}
-	if soldierCount == 0 {
+	if s.livingSoldierCount() == 0 {
 		return true
 	}
 
