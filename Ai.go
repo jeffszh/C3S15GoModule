@@ -94,10 +94,14 @@ func findBestMove(scene Scene, currentDepth int) (move Move, eval int) {
 	}
 	// 若只有一个最佳值，没得选。
 	if len(bestIndexes) == 1 {
-		return allPossibleMove[0], bestEval
+		return allPossibleMove[bestIndexes[0]], bestEval
 	}
 	randomIndex := rand.Intn(len(bestIndexes))
-	return allPossibleMove[randomIndex], bestEval
+	if bestIndexes == nil {
+		// 不可能
+		return nil, 0
+	}
+	return allPossibleMove[bestIndexes[randomIndex]], bestEval
 }
 
 func findAllPossibleMove(scene Scene) []Move {
