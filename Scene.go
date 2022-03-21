@@ -64,7 +64,7 @@ func (s *sceneStruct) Clone() Scene {
 		moveCount: s.moveCount,
 	}
 	for i := range newS.chessList {
-		newS.chessList[i].SetType(s.chessList[i].Type())
+		newS.chessList[i] = NewChess(s.chessList[i].Type())
 	}
 	return &newS
 }
