@@ -8,6 +8,7 @@ import (
 var aiThinkCount = 0
 var cancelAiRoutine = false
 var maxDepth = AppConfig.AiDepth
+var rootScene Scene
 
 func startAiIfNeed(scene Scene) {
 	if scene.MovingSide().PlayerType() == PlayerTypeAI &&
@@ -24,6 +25,7 @@ func CancelAiRoutine() {
 }
 
 func aiRoutine(scene Scene) {
+	rootScene = scene
 	time.Sleep(200 * time.Millisecond)
 	move, _ := findBestMove(scene.Clone(), 0)
 	if move != nil {
@@ -35,11 +37,11 @@ func aiRoutine(scene Scene) {
 	aiThinkCount = 0
 }
 
-func incThinkCount(scene Scene) {
+func incThinkCount() {
 	aiThinkCount++
-	if aiThinkCount%300 == 0 {
+	if aiThinkCount%3000 == 0 {
 		go func() {
-			scene.OnChange()
+			rootScene.OnChange()
 		}()
 		//println(aiThinkCount)
 	}
@@ -49,7 +51,7 @@ func findBestMove(scene Scene, currentDepth int) (move Move, eval int) {
 	if cancelAiRoutine {
 		return nil, 0
 	}
-	incThinkCount(scene)
+	incThinkCount()
 
 	// 到达最大深度了，直接评估并返回。
 	if currentDepth >= maxDepth {
