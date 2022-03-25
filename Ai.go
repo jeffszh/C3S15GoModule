@@ -8,7 +8,8 @@ import (
 var aiThinkCount = 0
 var cancelAiRoutine = false
 var maxDepth = AppConfig.AiDepth
-var rootScene Scene
+
+var onAiProgress func() = nil
 
 func startAiIfNeed(scene Scene) {
 	if scene.MovingSide().PlayerType() == PlayerTypeAI &&
@@ -24,8 +25,11 @@ func CancelAiRoutine() {
 	cancelAiRoutine = true
 }
 
+func SetOnAiProgress(f func()) {
+	onAiProgress = f
+}
+
 func aiRoutine(scene Scene) {
-	rootScene = scene
 	time.Sleep(200 * time.Millisecond)
 	move, _ := findBestMove(scene.Clone(), 0)
 	if move != nil {
@@ -37,13 +41,17 @@ func aiRoutine(scene Scene) {
 	aiThinkCount = 0
 }
 
+var lastTime int64 = 0
+
 func incThinkCount() {
 	aiThinkCount++
-	if aiThinkCount%3000 == 0 {
-		go func() {
-			rootScene.OnChange()
-		}()
-		//println(aiThinkCount)
+	now := time.Now().UnixMilli()
+	// 通知外面的时间间隔至少为0.3秒，免得加重GUI的负担。
+	if now-lastTime >= 300 {
+		lastTime = now
+		if onAiProgress != nil {
+			go onAiProgress()
+		}
 	}
 }
 
